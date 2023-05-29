@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.xten.model.dao.XtenDao">
+
+	<!-- 전체 운동 조회 -->
+	<select id="selectAllExercises" resultType="Exercise">
+		SELECT exercise_seq as exerciseSeq,
+		exercise_name as exerciseName,
+		exercise_image as exerciseImage
+		FROM exercise
+	</select>
+	
+	<!-- 전체 테스트 결과 조회 -->
+	<select id="selectTestResults" resultType="TestResult" parameterType="int">
+		SELECT test_result_seq as testResultSeq,
+		user_seq as userSeq,
+		exercise_seq as exerciseSeq,
+		date_format(test_date, '%y-%m-%d %H:%i') as testDate
+		FROM test_result
+		WHERE user_seq=#{userSeq}
+	</select>
+	
+	<!-- 찜한영상 조회 -->
+	<select id="selectFavoriteVideos" resultType="FavoriteVideos" parameterType="int">
+		SELECT favorite_videos_seq as favoriteVideosSeq,
+		user_seq as userSeq,
+		video_url as videoUrl,
+		video_title as videoTitle
+		FROM favorite_videos
+		WHERE user_seq=#{userSeq}
+	</select>
+	
+	<!-- 찜한운동 조회 -->
+	<select id="selectFavoriteExercises" resultType="FavoriteExercises">
+		SELECT favorite_exercises_seq as favoriteExercisesSeq,
+		exercise_seq as exerciseSeq,
+		user_seq userSeq
+		FROM favorite_exercises
+	</select>
+	
+	<!-- 찜한영상에 추가 -->
+	<insert id="insertFavoriteVideos" parameterType="FavoriteVideos">
+		INSERT INTO favorite_videos (user_seq, video_url, video_title)
+		VALUES(#{userSeq}, #{videoUrl}, #{videoTitle})
+	</insert>
+	
+	<!-- 찜한영상에서 삭제 -->
+	<delete id="deleteFavoriteVideos" parameterType="HashMap">
+		DELETE FROM favorite_videos
+		WHERE user_seq=#{userSeq} AND video_url=#{videoUrl}
+	</delete>
+	
+	<!-- 찜한운동에 추가 -->
+	<insert id="insertFavoriteExercises" parameterType="FavoriteExercises">
+		INSERT INTO favorite_exercises (user_seq, exercise_seq)
+		VALUES(#{userSeq}, #{exerciseSeq})
+	</insert>
+	
+	<!-- 찜한운동에서 삭제 -->
+	<delete id="deleteFavoriteExercises" parameterType="int">
+		DELETE FROM favorite_exercises
+		WHERE user_seq=#{userSeq} AND exercise_seq=#{exerciseSeq}
+	</delete>
+	
+	<!-- 테스트 결과 저장 -->
+	<insert id="insertTestResult" parameterType="TestResult">
+		INSERT INTO test_result (user_seq, exercise_seq)
+		VALUES(#{userSeq}, #{exerciseSeq})
+	</insert>
+	
+	<!-- 테스트 결과 삭제 -->
+	<delete id="deleteTestResult" parameterType="int">
+		DELETE FROM test_result
+		WHERE user_seq=#{userSeq} AND test_result_seq=#{testResultSeq}
+	</delete>
+	
+
+</mapper>
